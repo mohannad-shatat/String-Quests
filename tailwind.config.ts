@@ -12,6 +12,13 @@ const config: Config = {
     { pattern: /from-(blue|purple|emerald|orange|indigo|yellow|teal|pink|amber|violet|cyan|green|rose|sky|fuchsia|stone|lime|red|slate)-(400|500)/ },
     { pattern: /to-(blue|purple|emerald|orange|indigo|yellow|teal|pink|amber|violet|cyan|green|rose|sky|fuchsia|stone|lime|red|slate)-(400|500)/ },
     { pattern: /border-(blue|purple|emerald|orange|indigo|yellow|teal|pink|amber|violet|cyan|green|rose|sky|fuchsia|stone|lime|red|slate)-(200|300)/ },
+    // Member-type tiles pick their hover ring from memberTypes.ts by name, so
+    // the hover variant has to be safelisted too — the pattern above only
+    // emits the base utility.
+    {
+      pattern: /border-(amber|violet|emerald|orange|rose|sky|slate)-(200|300)/,
+      variants: ['hover'],
+    },
     { pattern: /shadow-(blue|purple|emerald|orange|indigo|yellow|teal|pink|amber|violet|cyan|green|rose|sky|fuchsia|stone|lime|red|slate)-(500)/ },
     // String-Quests Design System (sq-*) safelist. Every literal that the
     // design-system static maps construct lives here so the JIT picks them
@@ -34,6 +41,13 @@ const config: Config = {
     'text-sq-info-500','text-sq-info-600','text-sq-info-700',
     'border-sq-info-200','border-sq-info-500',
     'bg-sq-cloud','bg-sq-stone','text-sq-ink',
+    // Student Manager accent (pink). Mirrors the enrolment/registration
+    // surfaces — pink primary + navy (`sq-ink`) secondary.
+    'bg-sq-accent-50','bg-sq-accent-100','bg-sq-accent-500','bg-sq-accent-600','bg-sq-accent-700',
+    'text-sq-accent-500','text-sq-accent-600','text-sq-accent-700',
+    'border-sq-accent-200','border-sq-accent-500','border-sq-accent-600',
+    'ring-sq-accent-500','ring-sq-accent-500/40','ring-sq-accent-500/20',
+    'from-sq-accent-500','to-sq-accent-600',
   ],
   theme: {
     extend: {
@@ -88,6 +102,15 @@ const config: Config = {
           'info-50':     '#F0F9FF',
           'info-500':    '#0EA5E9',
           'info-600':    '#0284C7',
+          // Accent: pink — the Student Manager / enrolment surfaces. Pairs
+          // with `ink` as the navy secondary. Scoped to that module; the
+          // app-wide brand stays violet.
+          'accent-50':   '#FDF2F8',
+          'accent-100':  '#FCE7F3',
+          'accent-200':  '#FBCFE8',
+          'accent-500':  '#EC4899',
+          'accent-600':  '#DB2777',
+          'accent-700':  '#BE185D',
           ink:    '#0F172A',
           stone:  '#94A3B8',
           cloud:  '#F8FAFC',

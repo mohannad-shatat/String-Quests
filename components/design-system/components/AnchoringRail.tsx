@@ -41,6 +41,8 @@ interface SqAnchoringRailProps {
   activeHalo?: string; // e.g. 'bg-sq-brand-500/15'
   activeIconColor?: string; // e.g. 'text-sq-brand-700'
   checkBg?: string; // e.g. 'bg-sq-brand-500'
+  /** Copy for the 'optional' status pill. Defaults to English. */
+  optionalLabel?: string;
 }
 
 const DEFAULT_ACTIVE_BG = 'bg-sq-brand-500 shadow-sm shadow-violet-500/30';
@@ -59,6 +61,7 @@ export const SqAnchoringRail: React.FC<SqAnchoringRailProps> = ({
   activeHalo = DEFAULT_HALO,
   activeIconColor = DEFAULT_ICON,
   checkBg = DEFAULT_CHECK,
+  optionalLabel = 'Optional',
 }) => {
   const reduce = useReducedMotion();
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -137,7 +140,11 @@ export const SqAnchoringRail: React.FC<SqAnchoringRailProps> = ({
                       />
                     )}
                     <span className="flex-1 truncate">{section.label}</span>
-                    <RailStatus complete={section.complete} checkBg={checkBg} />
+                    <RailStatus
+                      complete={section.complete}
+                      checkBg={checkBg}
+                      optionalLabel={optionalLabel}
+                    />
                   </button>
                 </li>
               );
@@ -208,14 +215,15 @@ export const SqAnchoringRail: React.FC<SqAnchoringRailProps> = ({
   );
 };
 
-const RailStatus: React.FC<{ complete: boolean | 'optional'; checkBg: string }> = ({
-  complete,
-  checkBg,
-}) => {
+const RailStatus: React.FC<{
+  complete: boolean | 'optional';
+  checkBg: string;
+  optionalLabel: string;
+}> = ({ complete, checkBg, optionalLabel }) => {
   if (complete === 'optional') {
     return (
       <span className="text-[10px] font-bold text-slate-400 px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200">
-        Optional
+        {optionalLabel}
       </span>
     );
   }

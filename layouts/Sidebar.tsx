@@ -17,6 +17,10 @@ import {
   Palette,
   Smartphone,
   KeyRound,
+  UserPlus,
+  Users,
+  MessagesSquare,
+  ShieldCheck,
 } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 
@@ -58,6 +62,10 @@ const DEV_TOGGLES: DevToggle[] = [
   { label: 'Schedule', icon: CalendarDays, route: '/schedule', color: 'text-duo-blue-dark' },
   { label: 'Skill Map Pro', icon: BrainCircuit, route: '/skill-map-premium', color: 'text-violet-400' },
   { label: 'Teacher Profile', icon: User, route: '/teacher-profile', color: 'text-sky-400' },
+  { label: 'People', icon: MessagesSquare, route: '/people', color: 'text-sq-accent-500' },
+  { label: 'Students', icon: UserPlus, route: '/students', color: 'text-pink-400' },
+  { label: 'Teachers', icon: Users, route: '/teachers', color: 'text-violet-500' },
+  { label: 'Other Members', icon: ShieldCheck, route: '/members', color: 'text-amber-500' },
   { label: 'Edison Proposal', icon: FileText, route: '/proposal/edison', color: 'text-emerald-400' },
   { label: 'Design System', icon: Palette, route: '/design-system', color: 'text-sq-brand-500' },
 ];

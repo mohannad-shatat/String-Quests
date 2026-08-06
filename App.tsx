@@ -50,6 +50,18 @@ const ParentMessagesTab = lazy(() =>
 // Design System showcase (lazy)
 const DesignSystemLayout = lazy(() => import('./components/design-system/showcase/DesignSystemLayout').then(m => ({ default: m.DesignSystemLayout })));
 
+// Student Manager (lazy) — roster + Notion-style add/edit peek panel
+const StudentsPage = lazy(() => import('./components/students/StudentsPage').then(m => ({ default: m.StudentsPage })));
+
+// Teachers roster (lazy) — the students page's twin
+const TeachersPage = lazy(() => import('./components/teachers/TeachersPage').then(m => ({ default: m.TeachersPage })));
+
+// People (lazy) — the global roster, with the type rail
+const PeopleHubPage = lazy(() => import('./components/people/PeopleHubPage').then(m => ({ default: m.PeopleHubPage })));
+
+// Other members (lazy) — the five staff roles plus derived parents, one screen
+const MembersPage = lazy(() => import('./components/members/MembersPage').then(m => ({ default: m.MembersPage })));
+
 // Role-based layouts (keep as-is)
 import { TeacherLayout } from './components/teacher/TeacherLayout';
 import { EduMatrixAllocation } from './components/admin/EduMatrixAllocation';
@@ -119,6 +131,18 @@ const App: React.FC = () => {
 
               {/* Teacher Profile */}
               <Route path="/teacher-profile" element={<TeacherProfileRoute />} />
+
+              {/* People — the global roster across every kind of person */}
+              <Route path="/people" element={<PeopleHubPage onExit={() => window.location.href = '/home'} />} />
+
+              {/* Student Manager — roster + add/edit peek panel */}
+              <Route path="/students" element={<StudentsPage onExit={() => window.location.href = '/people'} />} />
+
+              {/* Teachers roster */}
+              <Route path="/teachers" element={<TeachersPage onExit={() => window.location.href = '/people'} />} />
+
+              {/* Other members — the five staff roles plus parents */}
+              <Route path="/members" element={<MembersPage onExit={() => window.location.href = '/people'} />} />
 
               {/* Proposal */}
               <Route path="/proposal/edison" element={<EdisonProposal />} />
