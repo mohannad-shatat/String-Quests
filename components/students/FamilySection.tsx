@@ -14,7 +14,7 @@
 import React from 'react';
 import { Users, UserRound, Link2, Unlink, UserCheck, Sparkles, ClipboardCopy } from 'lucide-react';
 import { SectionCard, type SectionProps } from './StudentSections';
-import { ParentQrInvite } from './ParentQrInvite';
+import { ParentQrInvite, type InviteRelation } from './ParentQrInvite';
 import { GuardianList, GuardianSummary } from './GuardianList';
 import { siblingConfidence, type SiblingMatch } from './studentMatching';
 import type { Guardian, ParentLinkMethod } from './studentTypes';
@@ -24,9 +24,9 @@ interface FamilySectionProps extends SectionProps {
   confirmedFamily: SiblingMatch[];
   onLinkFamily: (studentId: string) => void;
   onUnlinkFamily: () => void;
-  onCopyInviteMessage: () => void;
-  inviteCopied: boolean;
-  onExpandQr: () => void;
+  onCopyInviteMessage: (relation: InviteRelation) => void;
+  inviteCopied: InviteRelation | null;
+  onExpandQr: (relation: InviteRelation) => void;
   onCopyGuardians: (guardians: Guardian[]) => void;
 }
 

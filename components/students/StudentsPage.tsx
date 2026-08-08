@@ -49,7 +49,7 @@ import { StudentsTable, PAGE_SIZE, type SortState } from './StudentsTable';
 import { StudentForm } from './StudentForm';
 import { StudentPeekPanel, loadPanelMode, type PanelMode } from './StudentPeekPanel';
 import { ResetPasswordDialog } from './ResetPasswordDialog';
-import { buildInviteMessage } from './ParentQrInvite';
+import { buildInviteMessage, type InviteRelation } from './ParentQrInvite';
 import { QrFullscreen } from './QrFullscreen';
 import { FilterBar, type SortKey } from './FilterBar';
 import { StudentsEmptyState } from './StudentsEmptyState';
@@ -117,9 +117,10 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState<PanelMode>(loadPanelMode);
   const [saving, setSaving] = useState(false);
-  const [inviteCopied, setInviteCopied] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState<InviteRelation | null>(null);
   const [resetTarget, setResetTarget] = useState<StudentRecord | null>(null);
-  const [qrFullscreen, setQrFullscreen] = useState(false);
+  /** Which parent's code is expanded, or null when closed. */
+  const [qrFullscreen, setQrFullscreen] = useState<InviteRelation | null>(null);
   const [searchExpanded, setSearchExpanded] = useState(false);
   /** Bumped to ask the filter bar to open its full field menu. */
   const [advancedSignal, setAdvancedSignal] = useState(0);
@@ -446,18 +447,26 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
     [form, showToast, t],
   );
 
-  const handleCopyInviteMessage = useCallback(() => {
-    const text = buildInviteMessage(form.record.name, form.record.studentId, locale as Locale);
-    navigator.clipboard?.writeText(text).then(
-      () => {
-        setInviteCopied(true);
-        window.setTimeout(() => setInviteCopied(false), 2000);
-      },
-      () => {
-        /* clipboard blocked */
-      },
-    );
-  }, [form.record.name, form.record.studentId, locale]);
+  const handleCopyInviteMessage = useCallback(
+    (relation: InviteRelation) => {
+      const text = buildInviteMessage(
+        form.record.name,
+        form.record.studentId,
+        locale as Locale,
+        relation,
+      );
+      navigator.clipboard?.writeText(text).then(
+        () => {
+          setInviteCopied(relation);
+          window.setTimeout(() => setInviteCopied(null), 2000);
+        },
+        () => {
+          /* clipboard blocked */
+        },
+      );
+    },
+    [form.record.name, form.record.studentId, locale],
+  );
 
   /** Inherit a linked sibling's guardians, with fresh ids so the two records
       stay independently editable. */
@@ -1019,19 +1028,20 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
             onLinkFamily={handleLinkFamily}
             onOpenStudent={openPanel}
             onResetPassword={isNew ? undefined : () => setResetTarget(form.record)}
-            onExpandQr={() => setQrFullscreen(true)}
+            onExpandQr={setQrFullscreen}
             onCopyGuardians={handleCopyGuardians}
           />
         )}
       </StudentPeekPanel>
 
       <QrFullscreen
-        open={qrFullscreen}
+        open={qrFullscreen !== null}
         studentName={form.record.name}
         studentId={form.record.studentId}
+        relation={qrFullscreen ?? 'father'}
         locale={locale as Locale}
         t={t}
-        onClose={() => setQrFullscreen(false)}
+        onClose={() => setQrFullscreen(null)}
       />
 
       <ResetPasswordDialog

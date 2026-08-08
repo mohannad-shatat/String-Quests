@@ -21,6 +21,7 @@ import {
   Users,
   MessagesSquare,
   ShieldCheck,
+  HeartHandshake,
 } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 
@@ -66,6 +67,7 @@ const DEV_TOGGLES: DevToggle[] = [
   { label: 'Students', icon: UserPlus, route: '/students', color: 'text-pink-400' },
   { label: 'Teachers', icon: Users, route: '/teachers', color: 'text-violet-500' },
   { label: 'Other Members', icon: ShieldCheck, route: '/members', color: 'text-amber-500' },
+  { label: 'Family Invite', icon: HeartHandshake, route: '/family-invite', color: 'text-rose-400' },
   { label: 'Edison Proposal', icon: FileText, route: '/proposal/edison', color: 'text-emerald-400' },
   { label: 'Design System', icon: Palette, route: '/design-system', color: 'text-sq-brand-500' },
 ];

@@ -62,6 +62,9 @@ const PeopleHubPage = lazy(() => import('./components/people/PeopleHubPage').the
 // Other members (lazy) — the five staff roles plus derived parents, one screen
 const MembersPage = lazy(() => import('./components/members/MembersPage').then(m => ({ default: m.MembersPage })));
 
+// Family invite (lazy) — the parent-facing screens behind the WhatsApp link
+const FamilyInvitePage = lazy(() => import('./components/family-invite/FamilyInvitePage').then(m => ({ default: m.FamilyInvitePage })));
+
 // Role-based layouts (keep as-is)
 import { TeacherLayout } from './components/teacher/TeacherLayout';
 import { EduMatrixAllocation } from './components/admin/EduMatrixAllocation';
@@ -143,6 +146,9 @@ const App: React.FC = () => {
 
               {/* Other members — the five staff roles plus parents */}
               <Route path="/members" element={<MembersPage onExit={() => window.location.href = '/people'} />} />
+
+              {/* Family invite — what a guardian opens from the WhatsApp link */}
+              <Route path="/family-invite" element={<FamilyInvitePage onExit={() => window.location.href = '/students'} />} />
 
               {/* Proposal */}
               <Route path="/proposal/edison" element={<EdisonProposal />} />

@@ -21,6 +21,7 @@ import {
   SECTION_ICONS,
 } from './StudentSections';
 import { FamilySection } from './FamilySection';
+import type { InviteRelation } from './ParentQrInvite';
 import { DuplicateBanner } from './DuplicateBanner';
 import {
   ERROR_ORDER,
@@ -77,12 +78,12 @@ interface StudentFormProps {
   onCancel: () => void;
   onDelete?: () => void;
   onCopyLogin: () => void;
-  onCopyInviteMessage: () => void;
-  inviteCopied: boolean;
+  onCopyInviteMessage: (relation: InviteRelation) => void;
+  inviteCopied: InviteRelation | null;
   onLinkFamily: (studentId: string) => void;
   onOpenStudent: (studentId: string) => void;
   onResetPassword?: () => void;
-  onExpandQr: () => void;
+  onExpandQr: (relation: InviteRelation) => void;
   onCopyGuardians: (guardians: Guardian[]) => void;
 }
 

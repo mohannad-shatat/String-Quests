@@ -149,7 +149,11 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // QR invite
     'qr.title': 'دعوة وليّ الأمر عبر واتساب',
-    'qr.subtitle': 'اعرض هذا الرمز على وليّ الأمر ليمسحه بهاتفه.',
+    'qr.subtitle': 'رمز لكل وليّ أمر. اعرض الرمز المناسب ليمسحه بهاتفه.',
+    // Two codes, because the message behind each one identifies who is
+    // sending it — so neither parent has to explain which of them they are.
+    'qr.for.father': 'رمز الأب',
+    'qr.for.mother': 'رمز الأم',
     'qr.step1': 'افتح كاميرا هاتفك وامسح الرمز.',
     'qr.step2': 'سيفتح واتساب برسالة جاهزة تحتوي على اسم الطالب ورقمه.',
     'qr.step3': 'أرسل الرسالة كما هي دون تعديل.',
@@ -520,7 +524,9 @@ const dict: Record<Locale, Record<string, string>> = {
     'f.guardianNationalId.help': 'The most reliable way to spot siblings',
 
     'qr.title': 'Invite the parent over WhatsApp',
-    'qr.subtitle': 'Show this code to the parent and let them scan it.',
+    'qr.subtitle': 'One code per parent. Show whichever one applies and let them scan it.',
+    'qr.for.father': "Father's code",
+    'qr.for.mother': "Mother's code",
     'qr.step1': 'Open your phone camera and scan the code.',
     'qr.step2': "WhatsApp opens with a ready-made message containing the student's name and ID.",
     'qr.step3': 'Send the message exactly as it is, without editing it.',

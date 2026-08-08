@@ -10,13 +10,15 @@ import React, { useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X, MessageCircle } from 'lucide-react';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
-import { MockQrCode, buildInviteUrl } from './ParentQrInvite';
+import { MockQrCode, buildInviteUrl, inviteSeed, type InviteRelation } from './ParentQrInvite';
 import type { Locale } from './studentsI18n';
 
 interface QrFullscreenProps {
   open: boolean;
   studentName: string;
   studentId: string;
+  /** Which parent's code is on screen — father and mother carry different messages. */
+  relation: InviteRelation;
   locale: Locale;
   t: (key: string) => string;
   onClose: () => void;
@@ -26,6 +28,7 @@ export const QrFullscreen: React.FC<QrFullscreenProps> = ({
   open,
   studentName,
   studentId,
+  relation,
   locale,
   t,
   onClose,
@@ -73,7 +76,9 @@ export const QrFullscreen: React.FC<QrFullscreenProps> = ({
               <X className="w-5 h-5" />
             </button>
             <div className="flex-1 min-w-0">
-              <h2 className="text-sm font-bold text-sq-ink truncate">{t('qr.title')}</h2>
+              <h2 className="text-sm font-bold text-sq-ink truncate">
+                {t('qr.title')} — {t(`qr.for.${relation}`)}
+              </h2>
               <p className="text-[11px] font-bold text-slate-400 truncate">
                 {studentName.trim() || t('panel.new')}
                 {studentId ? ` · ${studentId}` : ''}
@@ -87,7 +92,7 @@ export const QrFullscreen: React.FC<QrFullscreenProps> = ({
               <div className="shrink-0">
                 <div className="relative rounded-3xl bg-white border-2 border-slate-200 p-4 shadow-lg">
                   <MockQrCode
-                    seed={studentId || studentName || 'string'}
+                    seed={inviteSeed(studentId, studentName, relation)}
                     size={Math.min(400, typeof window !== 'undefined' ? window.innerWidth - 96 : 400)}
                   />
                   <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -103,7 +108,16 @@ export const QrFullscreen: React.FC<QrFullscreenProps> = ({
 
               {/* Instructions, sized for reading at arm's length */}
               <div className="flex-1 min-w-0 max-w-md">
-                <h3 className="text-lg font-bold text-sq-ink">{t('qr.subtitle')}</h3>
+                <span
+                  className={
+                    relation === 'mother'
+                      ? 'inline-flex items-center px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold'
+                      : 'inline-flex items-center px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-bold'
+                  }
+                >
+                  {t(`qr.for.${relation}`)}
+                </span>
+                <h3 className="mt-3 text-lg font-bold text-sq-ink">{t('qr.subtitle')}</h3>
                 <ol className="mt-5 space-y-4">
                   {steps.map((step, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -116,7 +130,7 @@ export const QrFullscreen: React.FC<QrFullscreenProps> = ({
                 </ol>
 
                 <a
-                  href={buildInviteUrl(studentName, studentId, locale)}
+                  href={buildInviteUrl(studentName, studentId, locale, relation)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-sq-success-500 text-white text-sm font-bold hover:bg-sq-success-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-sq-success-500 transition-colors"
