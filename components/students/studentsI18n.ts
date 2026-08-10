@@ -129,6 +129,24 @@ const dict: Record<Locale, Record<string, string>> = {
     'family.qr.hint': 'وليّ الأمر يربط نفسه عبر واتساب',
 
     // Siblings
+    // Manual linking — the fallback for every family detection can't see.
+    'family.manualLink': 'ربط أخ يدويًا',
+    'family.manualLink.hint': 'إن لم يجد النظام الأخ، ابحث عنه بالاسم واربطه بنفسك.',
+    // Distinct from the roster's own search box, which sits a few hundred
+    // pixels away with a different scope.
+    'family.searchPh': 'ابحث عن طالب لربطه…',
+    'family.searchNone': 'لا يوجد طالب مطابق.',
+
+    // ─── خطوة ربط الأسرة بعد الإنشاء ───
+    'link.panelTitle': 'ربط الأسرة',
+    'link.created': 'تمت إضافة الطالب',
+    'link.title': 'هل له إخوة في المدرسة؟',
+    'link.subtitle': 'اربطهم الآن ليظهروا كأسرة واحدة. يمكنك تخطي هذه الخطوة والعودة إليها لاحقًا من ملف الطالب.',
+    'link.finish': 'إنهاء',
+    'link.backToForm': 'تعديل البيانات',
+    'link.linkedCount': 'عدد المرتبطين:',
+    'link.noneYet': 'لم يتم ربط أي أخ بعد.',
+
     'family.siblings': 'إخوة محتملون',
     'family.siblings.none': 'لم يُعثر على إخوة في النظام.',
     'family.siblings.hint': 'اقتراحات للمراجعة — أكّدها لربط الطلاب كأسرة واحدة.',
@@ -504,6 +522,20 @@ const dict: Record<Locale, Record<string, string>> = {
     'family.manual.hint': "You type the guardian's details",
     'family.qr': 'Invite by QR',
     'family.qr.hint': 'The parent links themselves via WhatsApp',
+
+    'family.manualLink': 'Link a sibling manually',
+    'family.manualLink.hint': "If the system didn't find them, search by name and link them yourself.",
+    'family.searchPh': 'Search for a student to link…',
+    'family.searchNone': 'No matching student.',
+
+    'link.panelTitle': 'Link the family',
+    'link.created': 'Student added',
+    'link.title': 'Do they have siblings at this school?',
+    'link.subtitle': 'Link them now so they show up as one family. You can skip this and come back to it from the student record.',
+    'link.finish': 'Finish',
+    'link.backToForm': 'Edit details',
+    'link.linkedCount': 'Linked:',
+    'link.noneYet': 'No siblings linked yet.',
 
     'family.siblings': 'Possible siblings',
     'family.siblings.none': 'No siblings found in the system.',

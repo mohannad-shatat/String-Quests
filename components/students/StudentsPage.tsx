@@ -47,6 +47,8 @@ import { fill, getStudentsString, type Locale } from './studentsI18n';
 import { useStudentForm } from './useStudentForm';
 import { StudentsTable, PAGE_SIZE, type SortState } from './StudentsTable';
 import { StudentForm } from './StudentForm';
+import { LinkSiblingsStep } from './LinkSiblingsStep';
+import { generateFamilyId } from './studentMatching';
 import { StudentPeekPanel, loadPanelMode, type PanelMode } from './StudentPeekPanel';
 import { ResetPasswordDialog } from './ResetPasswordDialog';
 import { buildInviteMessage, type InviteRelation } from './ParentQrInvite';
@@ -117,6 +119,12 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState<PanelMode>(loadPanelMode);
   const [saving, setSaving] = useState(false);
+  /**
+   * The id of a just-created student whose family step is open — not a
+   * boolean, because saving swaps `?student=new` for the real id and a
+   * boolean would be cleared by that very change.
+   */
+  const [linkStepFor, setLinkStepFor] = useState<string | null>(null);
   const [inviteCopied, setInviteCopied] = useState<InviteRelation | null>(null);
   const [resetTarget, setResetTarget] = useState<StudentRecord | null>(null);
   /** Which parent's code is expanded, or null when closed. */
@@ -287,6 +295,9 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
   const isNew = targetParam === 'new';
   const panelOpen = targetParam !== null;
 
+  /** The step belongs to one record — see `writeParams` for how it's cleared. */
+  const linkStep = linkStepFor !== null && linkStepFor === targetParam;
+
   const editing = useMemo(() => {
     if (!targetParam || isNew) return null;
     return students.find((s) => s.id === targetParam) ?? null;
@@ -317,6 +328,11 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
       const next: Record<string, string> = { ...filtersToParams(filters) };
       if (debouncedSearch.trim()) next.q = debouncedSearch.trim();
       if (studentParam) next.student = studentParam;
+      // Navigating away from a record ends its family step. Cleared here
+      // rather than in an effect on `student`: setSearchParams lands a render
+      // later than local state, so an effect would clear the step the save
+      // had just opened.
+      setLinkStepFor(null);
       setSearchParams(next, { replace: opts?.replace ?? false });
     },
     [filters, debouncedSearch, setSearchParams],
@@ -407,10 +423,47 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
     form.commit(saved);
     setSaving(false);
     showToast(isNew ? t('msg.created') : t('msg.saved'));
-    // Keep the panel open on the freshly-created record so staff can copy the
-    // login or keep editing, rather than bouncing them back to the roster.
-    if (isNew) setSearchParams({ student: saved.id }, { replace: true });
+
+    if (isNew) {
+      // Keep the panel open on the freshly-created record, and hand over to
+      // the family step: this is the one moment staff have the whole family
+      // in mind, having just typed the surname.
+      setSearchParams({ student: saved.id }, { replace: true });
+      setLinkStepFor(saved.id);
+    }
   }, [form, students, isNew, showToast, t, setSearchParams]);
+
+  /**
+   * Linking from the post-create step writes both sides immediately — the
+   * record already exists, so there is nothing left to discard and no reason
+   * to defer as the in-form linker does.
+   */
+  const handleLinkNow = useCallback(
+    (siblingId: string) => {
+      const self = students.find((s) => s.id === form.record.id);
+      const sibling = students.find((s) => s.id === siblingId);
+      if (!self || !sibling) return;
+
+      const famId = sibling.familyId || self.familyId || generateFamilyId();
+      let next = saveStudent({ ...self, familyId: famId, isLocal: true });
+      if (sibling.familyId !== famId) {
+        next = saveStudent({ ...sibling, familyId: famId, isLocal: true });
+      }
+      setLocal(next);
+      form.commit(next.find((s) => s.id === self.id) ?? { ...self, familyId: famId });
+      showToast(t('msg.familyLinked'));
+    },
+    [students, form, showToast, t],
+  );
+
+  /** Drops this student out of the family. The others keep theirs. */
+  const handleUnlinkNow = useCallback(() => {
+    const self = students.find((s) => s.id === form.record.id);
+    if (!self) return;
+    const next = saveStudent({ ...self, familyId: '', isLocal: true });
+    setLocal(next);
+    form.commit(next.find((s) => s.id === self.id) ?? { ...self, familyId: '' });
+  }, [students, form]);
 
   /** Single delete asks you to type the word — cheap, but not accidental. */
   const handleDelete = useCallback(() => {
@@ -974,8 +1027,8 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
       {/* Peek panel */}
       <StudentPeekPanel
         open={panelOpen}
-        title={isNew ? t('panel.new') : t('panel.edit')}
-        subtitle={isNew ? undefined : form.record.studentId}
+        title={linkStep ? t('link.panelTitle') : isNew ? t('panel.new') : t('panel.edit')}
+        subtitle={isNew && !linkStep ? undefined : form.record.studentId}
         locale={locale as 'ar' | 'en'}
         mode={mode}
         onModeChange={setMode}
@@ -1011,27 +1064,44 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ onExit }) => {
           )
         }
       >
-        {(compact) => (
-          <StudentForm
-            form={form}
-            locale={locale as Locale}
-            t={t}
-            isNew={isNew}
-            saving={saving}
-            compact={compact}
-            onSave={handleSave}
-            onCancel={handleClose}
-            onDelete={!isNew && form.record.isLocal ? handleDelete : undefined}
-            onCopyLogin={handleCopyLogin}
-            onCopyInviteMessage={handleCopyInviteMessage}
-            inviteCopied={inviteCopied}
-            onLinkFamily={handleLinkFamily}
-            onOpenStudent={openPanel}
-            onResetPassword={isNew ? undefined : () => setResetTarget(form.record)}
-            onExpandQr={setQrFullscreen}
-            onCopyGuardians={handleCopyGuardians}
-          />
-        )}
+        {(compact) =>
+          linkStep ? (
+            <LinkSiblingsStep
+              student={form.record}
+              allStudents={students}
+              suggestions={form.siblingSuggestions}
+              confirmedFamily={form.confirmedFamily}
+              locale={locale as 'ar' | 'en'}
+              t={t}
+              onLink={handleLinkNow}
+              onUnlink={handleUnlinkNow}
+              onCopyGuardians={handleCopyGuardians}
+              onFinish={() => writeParams(null)}
+              onEdit={() => setLinkStepFor(null)}
+            />
+          ) : (
+            <StudentForm
+              form={form}
+              locale={locale as Locale}
+              t={t}
+              isNew={isNew}
+              saving={saving}
+              compact={compact}
+              onSave={handleSave}
+              onCancel={handleClose}
+              onDelete={!isNew && form.record.isLocal ? handleDelete : undefined}
+              onCopyLogin={handleCopyLogin}
+              onCopyInviteMessage={handleCopyInviteMessage}
+              inviteCopied={inviteCopied}
+              onLinkFamily={handleLinkFamily}
+              allStudents={students}
+              onOpenStudent={openPanel}
+              onResetPassword={isNew ? undefined : () => setResetTarget(form.record)}
+              onExpandQr={setQrFullscreen}
+              onCopyGuardians={handleCopyGuardians}
+            />
+          )
+        }
       </StudentPeekPanel>
 
       <QrFullscreen

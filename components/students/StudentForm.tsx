@@ -81,6 +81,8 @@ interface StudentFormProps {
   onCopyInviteMessage: (relation: InviteRelation) => void;
   inviteCopied: InviteRelation | null;
   onLinkFamily: (studentId: string) => void;
+  /** Everyone, so the family linker can search beyond what detection found. */
+  allStudents: StudentRecord[];
   onOpenStudent: (studentId: string) => void;
   onResetPassword?: () => void;
   onExpandQr: (relation: InviteRelation) => void;
@@ -101,6 +103,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({
   onCopyInviteMessage,
   inviteCopied,
   onLinkFamily,
+  allStudents,
   onOpenStudent,
   onResetPassword,
   onExpandQr,
@@ -229,6 +232,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({
               {...sectionProps}
               siblings={form.siblingSuggestions}
               confirmedFamily={form.confirmedFamily}
+              allStudents={allStudents}
               onLinkFamily={onLinkFamily}
               onUnlinkFamily={form.unlinkFamily}
               onCopyInviteMessage={onCopyInviteMessage}
