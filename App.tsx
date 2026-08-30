@@ -65,6 +65,10 @@ const MembersPage = lazy(() => import('./components/members/MembersPage').then(m
 // Family invite (lazy) — the parent-facing screens behind the WhatsApp link
 const FamilyInvitePage = lazy(() => import('./components/family-invite/FamilyInvitePage').then(m => ({ default: m.FamilyInvitePage })));
 
+// Smart Screen (lazy) — the classroom display. Teacher sign-in is the gate;
+// classes, whiteboard, attendance and exam mode come after it.
+const SmartScreenLoginPage = lazy(() => import('./components/smart-screen/SmartScreenLoginPage').then(m => ({ default: m.SmartScreenLoginPage })));
+
 // Role-based layouts (keep as-is)
 import { TeacherLayout } from './components/teacher/TeacherLayout';
 import { EduMatrixAllocation } from './components/admin/EduMatrixAllocation';
@@ -149,6 +153,10 @@ const App: React.FC = () => {
 
               {/* Family invite — what a guardian opens from the WhatsApp link */}
               <Route path="/family-invite" element={<FamilyInvitePage onExit={() => window.location.href = '/students'} />} />
+
+              {/* Smart Screen — the classroom display, outside AppShell because
+                  it owns the whole wall and has no student chrome on it */}
+              <Route path="/screen" element={<SmartScreenLoginPage onExit={() => window.location.href = '/home'} />} />
 
               {/* Proposal */}
               <Route path="/proposal/edison" element={<EdisonProposal />} />
