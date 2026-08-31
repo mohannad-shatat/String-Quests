@@ -21,6 +21,13 @@ const ParentReportPage = lazy(() => import('./pages/ParentReportPage'));
 // Curriculum admin (lazy, full-screen)
 const CurriculumAdminPage = lazy(() => import('./components/curriculum-admin/CurriculumAdminPage').then(m => ({ default: m.CurriculumAdminPage })));
 
+// Whiteboard module (lazy, full-screen — also ships as a standalone APK)
+const LoginRoute = lazy(() => import('./components/whiteboard/routes').then(m => ({ default: m.LoginRoute })));
+const SpacesRoute = lazy(() => import('./components/whiteboard/routes').then(m => ({ default: m.SpacesRoute })));
+const SpaceDetailRoute = lazy(() => import('./components/whiteboard/routes').then(m => ({ default: m.SpaceDetailRoute })));
+const LessonRoute = lazy(() => import('./components/whiteboard/routes').then(m => ({ default: m.LessonRoute })));
+const AttendanceRoute = lazy(() => import('./components/whiteboard/routes').then(m => ({ default: m.AttendanceRoute })));
+
 // Role-based layouts (keep as-is)
 import { TeacherLayout } from './components/teacher/TeacherLayout';
 import { EduMatrixAllocation } from './components/admin/EduMatrixAllocation';
@@ -75,6 +82,13 @@ const App: React.FC = () => {
 
               {/* Topic Manager */}
               <Route path="/topic-manager/*" element={<TopicManagerLayout onExit={() => window.location.href = '/home'} />} />
+
+              {/* Auth + spaces */}
+              <Route path="/login" element={<LoginRoute />} />
+              <Route path="/spaces" element={<SpacesRoute />} />
+              <Route path="/spaces/:spaceId" element={<SpaceDetailRoute />} />
+              <Route path="/spaces/:spaceId/attendance" element={<AttendanceRoute />} />
+              <Route path="/spaces/:spaceId/:lessonId" element={<LessonRoute />} />
 
               {/* Premium Skill Map */}
               <Route path="/skill-map-premium" element={<SkillMapPremiumPage onExit={() => window.location.href = '/home'} />} />

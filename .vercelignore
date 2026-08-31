@@ -1,0 +1,10 @@
+# Vercel falls back to .gitignore when this file is absent, and .gitignore
+# excludes *.pdf — which would strip the textbook files out of the upload and
+# leave the Textbook artifact broken in production. This list replaces it.
+node_modules
+dist
+.git
+*.log
+.vscode
+.idea
+.DS_Store
