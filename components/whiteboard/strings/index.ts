@@ -1,9 +1,9 @@
 import type { LucideIcon } from 'lucide-react';
-import { Puzzle, Timer } from 'lucide-react';
+import { Puzzle, Timer, Plane } from 'lucide-react';
 import type { Bilingual } from './../spaces';
 import type { LessonArtifactData } from './../content/types';
 
-export type StringId = 'match-game' | 'speed-round';
+export type StringId = 'match-game' | 'speed-round' | 'flyby-four';
 
 /**
  * A "String" is a small interactive app built on top of a lesson's own content.
@@ -17,6 +17,10 @@ export interface StringApp {
   tint: string;
   soft: string;
   available: (data: LessonArtifactData) => boolean;
+  /** Set for strings that embed a page rather than run on lesson data. */
+  url?: string;
+  /** Shown as provenance whenever `url` points off-site. */
+  source?: string;
 }
 
 export const STRINGS: StringApp[] = [
@@ -43,6 +47,21 @@ export const STRINGS: StringApp[] = [
     tint: '#f59e0b',
     soft: '#fef4e2',
     available: (d) => d.quiz.length > 0,
+  },
+  {
+    id: 'flyby-four',
+    title: { en: 'Flyby Four', ar: 'Flyby Four' },
+    description: {
+      en: 'An arithmetic arcade game, embedded from Funbrain.',
+      ar: 'لعبة حساب سريعة، مضمّنة من موقع Funbrain.',
+    },
+    Icon: Plane,
+    tint: '#0ea5e9',
+    soft: '#e0f2fe',
+    url: 'https://www.funbrain.com/content/js_games/flyby_four/index.html',
+    source: 'funbrain.com',
+    // Independent of lesson content, so it is offered everywhere.
+    available: () => true,
   },
 ];
 

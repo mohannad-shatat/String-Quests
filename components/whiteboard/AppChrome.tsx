@@ -29,6 +29,8 @@ interface AppChromeProps {
   org?: string;
   /** Show the record control — only once the user is inside a space. */
   canRecord?: boolean;
+  /** Drop the top bar to give the screen over to the content. */
+  hideHeader?: boolean;
   children: React.ReactNode;
 }
 
@@ -107,49 +109,52 @@ const RecordButton: React.FC = () => {
 export const AppChrome: React.FC<AppChromeProps> = ({
   org = 'Al-Khadr Modern Schools',
   canRecord = false,
+  hideHeader = false,
   children,
 }) => {
   const { t, toggleLocale } = useBoardCopy();
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#f5f9fe] text-[#29343d]">
-      <header className="z-30 shrink-0 border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-[72px] items-center justify-between px-3 sm:px-6 md:px-8">
-          <div className="flex items-center gap-3">
-            <BrandMark />
-            <p className="max-w-[160px] truncate text-sm font-bold sm:max-w-[260px]">{org}</p>
+      {!hideHeader && (
+        <header className="z-30 shrink-0 border-b border-slate-200 bg-white">
+          <div className="mx-auto flex h-[72px] items-center justify-between px-3 sm:px-6 md:px-8">
+            <div className="flex items-center gap-3">
+              <BrandMark />
+              <p className="max-w-[160px] truncate text-sm font-bold sm:max-w-[260px]">{org}</p>
+            </div>
+
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button
+                type="button"
+                aria-label={t('top.notifications')}
+                className="relative rounded-xl p-2.5 transition-colors hover:bg-slate-50"
+              >
+                <Bell className="h-5 w-5" strokeWidth={1.6} />
+                <span className="absolute end-2 top-2 h-2 w-2 rounded-full bg-[#ed3b91] ring-2 ring-white" />
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleLocale}
+                className="rounded-lg px-2 py-1.5 text-sm font-bold transition-colors hover:bg-slate-100"
+              >
+                {t('lang')}
+              </button>
+
+              <button
+                type="button"
+                className="flex items-center gap-1 rounded-lg p-1 transition-colors hover:bg-slate-50"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#091e42] text-xs font-bold text-white">
+                  AK
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 text-[#526b7a]" />
+              </button>
+            </div>
           </div>
-
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              type="button"
-              aria-label={t('top.notifications')}
-              className="relative rounded-xl p-2.5 transition-colors hover:bg-slate-50"
-            >
-              <Bell className="h-5 w-5" strokeWidth={1.6} />
-              <span className="absolute end-2 top-2 h-2 w-2 rounded-full bg-[#ed3b91] ring-2 ring-white" />
-            </button>
-
-            <button
-              type="button"
-              onClick={toggleLocale}
-              className="rounded-lg px-2 py-1.5 text-sm font-bold transition-colors hover:bg-slate-100"
-            >
-              {t('lang')}
-            </button>
-
-            <button
-              type="button"
-              className="flex items-center gap-1 rounded-lg p-1 transition-colors hover:bg-slate-50"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#091e42] text-xs font-bold text-white">
-                AK
-              </span>
-              <ChevronDown className="h-3.5 w-3.5 text-[#526b7a]" />
-            </button>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       <div className="flex flex-1 overflow-hidden">
         <nav

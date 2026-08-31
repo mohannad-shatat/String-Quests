@@ -378,16 +378,51 @@ export const ArtifactModal: React.FC<ArtifactModalProps> = ({
         if (openString) {
           const app = STRINGS.find((a) => a.id === openString);
           if (!app) return null;
+
+          const back = (
+            <button
+              type="button"
+              onClick={() => setOpenString(null)}
+              className="flex items-center gap-1.5 text-xs font-bold text-[#6882a9] transition-colors hover:text-[#08b8fb]"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+              {t('str.back')}
+            </button>
+          );
+
+          // Embedded strings take the whole panel.
+          if (app.url) {
+            return (
+              <Body full>
+                <div className="flex h-full flex-col gap-2">
+                  <div className="flex shrink-0 items-center justify-between gap-3">
+                    {back}
+                    <a
+                      href={app.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="flex items-center gap-1.5 text-xs font-bold"
+                      style={{ color: app.tint }}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      {app.source}
+                    </a>
+                  </div>
+                  <iframe
+                    src={app.url}
+                    title={app.title[locale]}
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                    referrerPolicy="no-referrer"
+                    className="min-h-0 w-full flex-1 rounded-2xl border border-slate-200 bg-white"
+                  />
+                </div>
+              </Body>
+            );
+          }
+
           return (
             <Body>
-              <button
-                type="button"
-                onClick={() => setOpenString(null)}
-                className="mb-3 flex items-center gap-1.5 text-xs font-bold text-[#6882a9] transition-colors hover:text-[#08b8fb]"
-              >
-                <ChevronRight className="h-3.5 w-3.5" />
-                {t('str.back')}
-              </button>
+              <div className="mb-3">{back}</div>
               {app.id === 'match-game' ? (
                 <MatchGame data={data} tint={app.tint} />
               ) : (
@@ -421,6 +456,11 @@ export const ArtifactModal: React.FC<ArtifactModalProps> = ({
                       <span className="mt-0.5 block text-xs leading-relaxed text-[#6882a9]">
                         {app.description[locale]}
                       </span>
+                      {app.source && (
+                        <span className="mt-1 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-[#6882a9]">
+                          {app.source}
+                        </span>
+                      )}
                     </span>
                     <ChevronLeft className="h-4 w-4 shrink-0 text-[#6882a9]" />
                   </button>
@@ -489,7 +529,10 @@ export const ArtifactModal: React.FC<ArtifactModalProps> = ({
 
             <div
               className={`min-h-0 flex-1 px-5 py-5 ${
-                artifact.id === 'mind-map' || artifact.id === 'textbook'
+                artifact.id === 'mind-map' ||
+                artifact.id === 'textbook' ||
+                (artifact.id === 'strings' &&
+                  !!STRINGS.find((a) => a.id === openString)?.url)
                   ? 'overflow-hidden'
                   : 'overflow-y-auto'
               }`}

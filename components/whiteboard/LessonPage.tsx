@@ -27,7 +27,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({ spaceId, lessonId, onBac
   const lesson = unit?.lessons.find((l) => l.id === lessonId);
 
   return (
-    <AppChrome canRecord>
+    <AppChrome canRecord hideHeader>
       <div className="flex h-full flex-col">
         {/* Lesson bar */}
         <div className="flex shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
